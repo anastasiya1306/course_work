@@ -10,6 +10,7 @@ class Vacancy:
 
 
     def __str__(self):
-       return f'Название вакансии: {self.name}\nРаботодатель: {self.company_name}\nСсылка на вакансию:' \
-              f' {self.url}\nОписание вакансии: {self.description}\nЗарплата:' \
-              f' {self.salary["from"]} - {self.salary["to"]}\n'
+       return f'Название вакансии: {self.name}\nОрганизация: {self.company_name}\n'\
+              f'Ссылка на вакансию:{self.url}\n'\
+              f'Описание вакансии: {self.description}\n'\
+              f'Зарплата:{self.salary["from"]} - {self.salary["to"]}\n'
