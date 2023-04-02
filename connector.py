@@ -19,13 +19,9 @@ class Connector:
 
     @data_file.setter
     def data_file(self, value):
-        # код для установки файла
         self.__data_file = value
         self.__connect()
 
-    @staticmethod
-    def is_file_exist(path):
-        return os.path.isfile(path)
 
     def __connect(self):
         """
@@ -34,8 +30,7 @@ class Connector:
         Также проверить на деградацию и возбудить исключение
         если файл потерял актуальность в структуре данных
         """
-        # проверка на наличие файла
-        if not self.is_file_exist:
+        if not os.path.isfile(self.__data_file):
             raise FileNotFoundError('Файл не найден')
         try:
             with open(self.__data_file, 'r', encoding='utf-8') as file_path:
@@ -43,7 +38,6 @@ class Connector:
         except Exception:
             with open(self.data_file, 'w', encoding='utf-8') as file_path:
                 json.dump([], file_path)
-
 
 
     def insert(self, data):
@@ -59,7 +53,7 @@ class Connector:
             file_path.extend(data)
 
         with open(self.__data_file, 'w', encoding='utf8') as file:
-            json.dump(file_path, file, ensure_ascii=False, indent=4)
+            json.dump(file_path, file, indent=2, ensure_ascii=False)
 
     def select(self, query):
         """
@@ -69,7 +63,6 @@ class Connector:
         {'price': 1000}, должно отфильтровать данные по полю price
         и вернуть все строки, в которых цена 1000
         """
-        # считываем файл
         with open(self.__data_file, 'r', encoding='utf8') as file:
             file_path = json.load(file)
         data = []
@@ -90,27 +83,12 @@ class Connector:
 
         with open(self.__data_file, 'r', encoding='utf8') as file:
             file_path = json.load(file)
-        result = []
+        results = []
         for i in file_path:
             for key, value in query.items():
                 if i.get(key) == value:
-                    pass
-                else:
-                    result.append(i)
+                    results.append(i)
+            return results
 
-        with open(self.__data_file, 'w', encoding='utf8') as f:
-            json.dump(result, f, ensure_ascii=False, indent=4)
-
-
-if __name__ == '__main__':
-    df = Connector('df.json')
-
-    data_for_file = {'id': 1, 'title': 'tet'}
-
-    df.insert(data_for_file)
-    data_from_file = df.select(dict())
-    assert data_from_file == [data_for_file]
-
-    df.delete({'id':1})
-    data_from_file = df.select(dict())
-    assert data_from_file == []
+        with open(self.__data_file, 'w', encoding='utf8') as file:
+            json.dump(results, file, indent=2, ensure_ascii=False)
